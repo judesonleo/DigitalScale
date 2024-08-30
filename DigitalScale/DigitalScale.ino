@@ -5,7 +5,7 @@ const int LOADCELL_SCK_PIN = 5;
 
 HX711 scale;
 
-float calibration_factor = 26.16; 
+float calibration_factor = 26.58; 
 
 void setup() {
   Serial.begin(115200);
@@ -13,6 +13,7 @@ void setup() {
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
   scale.set_scale(calibration_factor);
+  //scale.set_scale();
 
   scale.tare();  
 
@@ -22,7 +23,7 @@ void setup() {
 void loop() {
   float weight = scale.get_units(10); 
   Serial.print("Weight: ");
-  Serial.print(weight);
+  Serial.print(weight-2000);
   Serial.println(" grams");
   delay(1000);
 }
