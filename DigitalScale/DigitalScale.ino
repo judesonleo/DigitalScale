@@ -26,7 +26,7 @@ char pass[] = "Judeson@143";
 const int BUTTON1_PIN = 12;  
 const int BUTTON2_PIN = 13;  
 const int BUTTON3_PIN = 14;  
-const int BUTTON4_PIN = 15; 
+const int BUTTON4_PIN = 27; 
 
 void setup() {
   Serial.begin(115200);
