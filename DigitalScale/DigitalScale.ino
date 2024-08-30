@@ -1,3 +1,7 @@
+#define BLYNK_TEMPLATE_ID "TMPL3Sg_7xi5T"
+#define BLYNK_TEMPLATE_NAME "Digital Scale"
+#define BLYNK_AUTH_TOKEN "YGmuOJbjjuDAifUKdY2umqpi4BWy017B"
+
 #include <WiFi.h>
 #include <BlynkSimpleEsp32.h>
 #include "HX711.h"
@@ -5,12 +9,10 @@
 const int LOADCELL_DOUT_PIN = 4; 
 const int LOADCELL_SCK_PIN = 5;  
 
-#define BLYNK_TEMPLATE_ID "TMPL3Sg_7xi5T"
-#define BLYNK_TEMPLATE_NAME "Digital Scale"
-#define BLYNK_AUTH_TOKEN "YGmuOJbjjuDAifUKdY2umqpi4BWy017B"
 
 HX711 scale;
 
+//float calibration_factor = 26.58;
 float calibration_factor = 26.58;
 int currentUser = -1;  
 
@@ -39,22 +41,23 @@ void setup() {
   Serial.println("Connected to Wi-Fi");
 
   Blynk.begin(auth, ssid, pass);
-
+  calibration_factor = 26.58;
+  currentUser = -1; 
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
   scale.set_scale(calibration_factor);
+ // scale.set_scale();
   scale.tare();  
 
-  pinMode(BUTTON1_PIN, INPUT_PULLUP);
-  pinMode(BUTTON2_PIN, INPUT_PULLUP);
-  pinMode(BUTTON3_PIN, INPUT_PULLUP);
-  pinMode(BUTTON4_PIN, INPUT_PULLUP);
+  pinMode(BUTTON1_PIN,INPUT_PULLUP);
+  pinMode(BUTTON2_PIN,INPUT_PULLUP);
+  pinMode(BUTTON3_PIN,INPUT_PULLUP);
+  pinMode(BUTTON4_PIN,INPUT_PULLUP);
 
   Serial.println("Setup complete.");
 }
 
 void loop() {
   Blynk.run();  
-
   if (digitalRead(BUTTON1_PIN) == LOW) {
     currentUser = 0;
     delay(200);
@@ -69,7 +72,9 @@ void loop() {
     delay(200);
   }
 
-  float averageWeight = scale.read_average(10) - 2000;
+  //float averageWeight = scale.read_average(10) - 2000;
+  float weight = scale.get_units(10); 
+  double averageWeight = (weight-1000)/1000;
 
   switch (currentUser) {
     case 0:
@@ -89,7 +94,8 @@ void loop() {
   Serial.print("User ");
   Serial.print(currentUser + 1);
   Serial.print(" Average Weight: ");
-  Serial.println(averageWeight);
+  Serial.print(averageWeight);
+  Serial.print("Kg\n");
 
   currentUser = -1;
   delay(100);  
